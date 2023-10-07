@@ -4,11 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc",
+    "start": "node build/index.js",
+    "dev": "nodemon src/main.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "telegraf": "^4.14.0"
+    "@grammyjs/menu": "^1.2.1",
+    "dotenv": "^16.3.1",
+    "grammy": "^1.19.0",
+    "nodemon": "^3.0.1",
+    "telegraf": "^4.14.0",
+    "ts-node-dev": "^2.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
   }
 }
