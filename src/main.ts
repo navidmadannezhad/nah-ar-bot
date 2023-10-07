@@ -4,7 +4,7 @@ import { Menu } from "@grammyjs/menu";
 
 const bot = new Bot(process.env.BOT_TOKEN as string)
 
-const isAdmin = (ctx: any) => ctx.update.message?.from.id === 547408580;
+const isAdmin = (ctx: any) => ctx.update.message?.from.id === process.env.ADMIN_ID;
 const stopBot = () => { console.log("bot stopped") }
 const openSettingMenu = () => { console.log("settings menu opened") }
 
