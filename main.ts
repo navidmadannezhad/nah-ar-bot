@@ -4,9 +4,12 @@ import { Menu } from "@grammyjs/menu";
 
 const bot = new Bot(process.env.BOT_TOKEN as string)
 
-const isAdmin = (ctx: any) => ctx.update.message?.from.id === process.env.ADMIN_ID;
-const stopBot = () => { console.log("bot stopped") }
-const openSettingMenu = () => { console.log("settings menu opened") }
+const isAdmin = (ctx: any) => ctx.update.message?.from.id == process.env.ADMIN_ID;
+
+// menu functions
+const openFeaturesMenu = (ctx: any) => { 
+    return ctx.reply("لطفا قابلیت مورد نظر را انتخاب کنید", { reply_markup: featuresMenu });
+}
 
 const featureControllerMenu = new Menu("feature-controller-menu")
     .text("فعال سازی", (ctx: any) => ctx.reply("You pressed A!"))
@@ -20,12 +23,22 @@ const featuresMenu = new Menu("features-menu")
         ctx.reply("تنظیمات - نوشیدنی", { reply_markup: featureControllerMenu })
     });
 
+
+
+
+// register menus
 bot.use(featureControllerMenu);
 bot.use(featuresMenu);
 
+
+
+
+
+
+
 bot.command("settings", async (ctx) => {
     if(isAdmin(ctx)){
-        await ctx.reply("لطفا قابلیت مورد نظر را انتخاب کنید", { reply_markup: featuresMenu });
+        await openFeaturesMenu(ctx)
     }else{
         await ctx.reply("حاج آقا نا-ادمین!");
     }
