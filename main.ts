@@ -1,6 +1,8 @@
 require('dotenv').config()
 import { Bot } from "grammy";
 import { Menu } from "@grammyjs/menu";
+import { changeInterval, configureStorageFile, createStorageFile, retrieveStorageFile } from "./src/storage/fileManager";
+import { ServiceIndetifier } from "./src/types";
 
 const bot = new Bot(process.env.BOT_TOKEN as string)
 
@@ -34,7 +36,14 @@ bot.use(featuresMenu);
 
 
 
-
+// test
+(async () => {
+    await createStorageFile();
+    await changeInterval(ServiceIndetifier.COOK, "3");
+    let data = await retrieveStorageFile();
+    console.log(data)
+})()
+// test
 
 bot.command("settings", async (ctx) => {
     if(isAdmin(ctx)){

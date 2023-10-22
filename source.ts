@@ -1,8 +1,10 @@
+import { ServiceIndetifier } from "./src/types";
+
 const source = [
     {
-        identifier: "drink",
+        identifier: ServiceIndetifier.DRINK,
         name: "سرویس دهنده نوشیدنی",
-        interval: "2",
+        interval: "1",
         list: [
             '1',
             '1',
@@ -13,7 +15,7 @@ const source = [
         ]
     },
     {
-        identifier: "cook",
+        identifier: ServiceIndetifier.COOK,
         name: "سرویس دهنده گرمکن",
         interval: "1",
         list: [
