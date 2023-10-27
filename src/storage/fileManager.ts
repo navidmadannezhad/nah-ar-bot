@@ -2,7 +2,7 @@ require('dotenv').config()
 
 import { writeFile, readFile, stat } from "fs/promises"
 import source from "../../source";
-import { ServiceIndetifier, ErrorMode } from "../types";
+import { ErrorMode } from "../types";
 
 export const createStorageFile = async () => {
     try{
@@ -28,12 +28,6 @@ export const updateFileStorage = async (data: any) => {
     }catch(e){
         throw new Error(ErrorMode.UPDATE_STORAGE_FILE)
     }
-}
-
-export const changeInterval = async (serviceType: ServiceIndetifier, interval: string): Promise<void> => {
-    const data = await retrieveStorageFile();
-    data.filter((obj: any) => obj.identifier === serviceType)[0].interval = interval;
-    await updateFileStorage(data);
 }
 
 export const configureStorageFile = async () => {

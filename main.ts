@@ -1,36 +1,41 @@
 require('dotenv').config()
-import { Bot } from "grammy";
-import { Menu } from "@grammyjs/menu";
-import { changeInterval, configureStorageFile, createStorageFile, retrieveStorageFile } from "./src/storage/fileManager";
-import { ServiceIndetifier } from "./src/types";
+import { Bot, Context, session, SessionFlavor } from "grammy";
+import { createStorageFile, retrieveStorageFile } from "./src/storage/fileManager";
+import { updateInterval } from "./src/storage/dataManager";
+import { ServiceIndetifier, SessionType } from "./src/types";
+import { ServiceControllerMenu, ServiceSelectMenu } from "./src/menus";
 
-const bot = new Bot(process.env.BOT_TOKEN as string)
+// define session
+type ContextType = Context & SessionFlavor<SessionType>;
+const bot = new Bot<ContextType>(process.env.BOT_TOKEN as string)
+
+const initial = (): SessionType => {
+    return {
+        selectedService: ServiceIndetifier.COOK
+    }
+}
+
+bot.use(session({ initial }))
+
+
+
+
+
+
+
+
 
 const isAdmin = (ctx: any) => ctx.update.message?.from.id == process.env.ADMIN_ID;
 
 // menu functions
 const openFeaturesMenu = (ctx: any) => { 
-    return ctx.reply("لطفا قابلیت مورد نظر را انتخاب کنید", { reply_markup: featuresMenu });
+    return ctx.reply("لطفا قابلیت مورد نظر را انتخاب کنید", { reply_markup: ServiceSelectMenu });
 }
 
-const featureControllerMenu = new Menu("feature-controller-menu")
-    .text("فعال سازی", (ctx: any) => ctx.reply("You pressed A!"))
-    .text("تغییر بازه زمانی", (ctx: any) => ctx.reply("You pressed B!"));
-
-const featuresMenu = new Menu("features-menu")
-    .text("گرمکن", (ctx: any) => {
-        ctx.reply("تنظیمات - گرمکن", { reply_markup: featureControllerMenu })
-    })
-    .text("نوشیدنی", (ctx: any) => {
-        ctx.reply("تنظیمات - نوشیدنی", { reply_markup: featureControllerMenu })
-    });
-
-
-
-
 // register menus
-bot.use(featureControllerMenu);
-bot.use(featuresMenu);
+bot.use(ServiceControllerMenu);
+bot.use(ServiceSelectMenu);
+
 
 
 
@@ -39,7 +44,7 @@ bot.use(featuresMenu);
 // test
 (async () => {
     await createStorageFile();
-    await changeInterval(ServiceIndetifier.COOK, "3");
+    await updateInterval(ServiceIndetifier.COOK, "3");
     let data = await retrieveStorageFile();
     console.log(data)
 })()

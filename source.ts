@@ -1,6 +1,7 @@
-import { ServiceIndetifier } from "./src/types";
+import { ServiceData, ServiceIndetifier } from "./src/types";
 
-const source = [
+
+const source: ServiceData[] = [
     {
         identifier: ServiceIndetifier.DRINK,
         name: "سرویس دهنده نوشیدنی",
@@ -12,7 +13,9 @@ const source = [
             '1',
             '1',
             '1'
-        ]
+        ],
+        order: 0,
+        active: true,
     },
     {
         identifier: ServiceIndetifier.COOK,
@@ -25,7 +28,9 @@ const source = [
             '1',
             '1',
             '1'
-        ]
+        ],
+        order: 0,
+        active: true,
     }
 ]
 
