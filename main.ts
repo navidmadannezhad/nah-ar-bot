@@ -3,52 +3,48 @@ import { Bot, Context, session, SessionFlavor } from "grammy";
 import { createStorageFile, retrieveStorageFile } from "./src/storage/fileManager";
 import { updateInterval } from "./src/storage/dataManager";
 import { ServiceIndetifier, SessionType } from "./src/types";
-import { ServiceControllerMenu, ServiceSelectMenu } from "./src/menus";
+import { ServiceControllerMenu, ServiceSelectMenu, GetNewIntervalMenu, getIntervalConversation } from "./src/menus";
+import { initialSession } from "./src/storage/sessionManager";
+
+import {
+    type Conversation,
+    type ConversationFlavor,
+    conversations,
+    createConversation,
+  } from "@grammyjs/conversations";
 
 // define session
-type ContextType = Context & SessionFlavor<SessionType>;
+export type ContextType = Context & SessionFlavor<SessionType> & ConversationFlavor;
+export type ConversationType = Conversation<ContextType>;
 const bot = new Bot<ContextType>(process.env.BOT_TOKEN as string)
 
 const initial = (): SessionType => {
-    return {
-        selectedService: ServiceIndetifier.COOK
-    }
+    return initialSession;
 }
 
 bot.use(session({ initial }))
-
-
-
-
-
-
-
-
+bot.use(conversations())
 
 const isAdmin = (ctx: any) => ctx.update.message?.from.id == process.env.ADMIN_ID;
 
 // menu functions
 const openFeaturesMenu = (ctx: any) => { 
+    ctx.session.canChangeSettings = true;
     return ctx.reply("لطفا قابلیت مورد نظر را انتخاب کنید", { reply_markup: ServiceSelectMenu });
 }
 
+// register conversations
+bot.use(createConversation(getIntervalConversation));
+
 // register menus
+bot.use(GetNewIntervalMenu);
 bot.use(ServiceControllerMenu);
 bot.use(ServiceSelectMenu);
 
 
-
-
-
-
-// test
-(async () => {
-    await createStorageFile();
-    await updateInterval(ServiceIndetifier.COOK, "3");
-    let data = await retrieveStorageFile();
-    console.log(data)
-})()
-// test
+bot.command("cancel", async (ctx) => {
+    
+});
 
 bot.command("settings", async (ctx) => {
     if(isAdmin(ctx)){

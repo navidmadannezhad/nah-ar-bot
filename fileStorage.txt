@@ -1,1 +1,1 @@
-[{"identifier":"drink","name":"سرویس دهنده نوشیدنی","interval":"1","list":["1","1","1","1","1","1"],"order":0,"active":true},{"identifier":"cook","name":"سرویس دهنده گرمکن","interval":"3","list":["1","1","1","1","1","1"],"order":0,"active":true}]
+[{"identifier":"drink","name":"سرویس دهنده نوشیدنی","interval":"12","list":["1","1","1","1","1","1"],"order":0,"active":true},{"identifier":"cook","name":"سرویس دهنده گرمکن","list":["1","1","1","1","1","1"],"order":0,"active":true}]
