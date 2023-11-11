@@ -81,6 +81,9 @@ const sendNoticeMsg = async (): Promise<void> => {
     let selectedDrink = DRINK_LIST[currentDrinkOrder];
     let selectedCook = COOK_LIST[currentCookOrder]
 
+    console.log(selectedDrink)
+    console.log(selectedCook)
+
     const membership = await bot.api.getChatMember(process.env.TARGET_GROUP_ID as string, bot.botInfo.id);
     const botIsMember = membership.status !== "left" && membership.status !== "kicked";
 
