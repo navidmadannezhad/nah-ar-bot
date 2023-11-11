@@ -1,17 +1,17 @@
 require('dotenv').config()
 import { Bot, Context, session, SessionFlavor } from "grammy";
-import { createStorageFile, retrieveStorageFile } from "./src/storage/fileManager";
-import { updateInterval } from "./src/storage/dataManager";
-import { ServiceIndetifier, SessionType } from "./src/types";
-import { ServiceControllerMenu, ServiceSelectMenu, GetNewIntervalMenu, getIntervalConversation } from "./src/menus";
+import { SessionType } from "./src/types";
+import { ServiceControllerMenu, ServiceSelectMenu } from "./src/menus";
 import { initialSession } from "./src/storage/sessionManager";
-
 import {
     type Conversation,
     type ConversationFlavor,
     conversations,
     createConversation,
   } from "@grammyjs/conversations";
+import { configureStorageFile } from "./src/storage/fileManager";
+import { getIntervalConversation, sendNoticeMsgConversation } from "./src/conversations";
+const cron = require('node-cron');
 
 // define session
 export type ContextType = Context & SessionFlavor<SessionType> & ConversationFlavor;
@@ -35,15 +35,14 @@ const openFeaturesMenu = (ctx: any) => {
 
 // register conversations
 bot.use(createConversation(getIntervalConversation));
+bot.use(createConversation(sendNoticeMsgConversation))
 
 // register menus
-bot.use(GetNewIntervalMenu);
 bot.use(ServiceControllerMenu);
 bot.use(ServiceSelectMenu);
 
-
 bot.command("cancel", async (ctx) => {
-    
+    console.log(ctx)
 });
 
 bot.command("settings", async (ctx) => {
@@ -54,4 +53,42 @@ bot.command("settings", async (ctx) => {
     }
 });
 
-bot.start();
+
+
+const sendMsgOnInterval = (): void => {
+    const allowedWeekDays: string[] = [
+        'Saturday',
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday'
+    ];
+
+    // cron.schedule(`0 11 * * ${ allowedWeekDays.join(',') }`, async () => {
+    //     await sendNoticeMsg();
+    // })
+
+    cron.schedule(`*/10 * * * * *`, async () => {
+        await sendNoticeMsg();
+    })
+}
+
+const sendNoticeMsg = async (): Promise<void> => {
+    let selectedDrink = 'غزنوی'
+    let selectedCook = 'هدایتی'
+    bot.api.sendMessage(process.env.ADMIN_ID as string,`<b>امروز!</b>\n\n<b>نوبت نوشیدنی:</b><b> ${selectedDrink}</b>\n<b>نوبت گرمکن:</b><b> ${selectedCook}</b>`, { parse_mode: "HTML" })
+}
+
+
+
+
+const initiateSystem = async () => {
+    await configureStorageFile();
+    bot.start();
+
+    sendMsgOnInterval();
+}
+
+(async () => {
+    await initiateSystem();
+})()

@@ -1,11 +1,9 @@
 import { Menu } from "@grammyjs/menu";
-import { getServiceActivity, updateInterval } from "../storage/dataManager";
+import { getServiceActivity } from "../storage/dataManager";
 import { ServiceIndetifier } from "../types";
 import { enableService, disableService } from "../storage/dataManager";
 import { ErrorMode, SuccessMode } from "../types";
-import { GetNewIntervalMenu } from "./GetNewIntervalMenu";
 import { initialSession } from "../storage/sessionManager";
-import { ContextType, ConversationType } from "../../main";
 
 const toggleServiceActivation = async (selectedService: ServiceIndetifier) => {
     const serviceActive = await getServiceActivity(selectedService);
@@ -23,20 +21,6 @@ const toggleServiceActivation = async (selectedService: ServiceIndetifier) => {
         }catch(e){
             console.log(ErrorMode.SERVICE_ENABLE_FAILED)
         }
-    }
-}
-
-export const getIntervalConversation = async (conversation: ConversationType, ctx: ContextType) => {
-    const selectedService = ctx.session.selectedService;
-    await ctx.reply("لطفا بازه زمانی مورد نظر خود را وارد کنید");
-    const { message } = await conversation.wait();
-    try{
-        await updateInterval(selectedService as ServiceIndetifier, message?.text as string);
-        ctx.session = initialSession;
-        ctx.reply("بازه زمانی با موفقیت تغییر کرد");
-    }catch(e){
-        console.log(e)
-        ctx.reply("در تغییر بازه زمانی مشکلی پیش آمده است");
     }
 }
 

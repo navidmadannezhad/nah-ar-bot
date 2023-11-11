@@ -1,6 +1,7 @@
 require('dotenv').config()
 
-import { writeFile, readFile, stat } from "fs/promises"
+import { writeFile, readFile } from "fs/promises";
+import { existsSync } from "fs";
 import source from "../../source";
 import { ErrorMode } from "../types";
 
@@ -31,8 +32,8 @@ export const updateFileStorage = async (data: any) => {
 }
 
 export const configureStorageFile = async () => {
-    let storageStat = await stat(process.env.STORAGE_FILE_PATH as any);
-    if(!storageStat.isFile){
+    let storageExists = existsSync(process.env.STORAGE_FILE_PATH as any);
+    if(!storageExists){
         try{
             await createStorageFile();
         }catch(e){
