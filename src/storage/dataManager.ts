@@ -13,6 +13,11 @@ export const updateOrder = async (serviceType: ServiceIndetifier, order: number)
     await updateFileStorage(data);
 }
 
+export const getCurrentOrder = async (serviceType: ServiceIndetifier): Promise<number> => {
+    const data = await retrieveStorageFile();
+    return data.filter((obj: any) => obj.identifier === serviceType)[0].order;
+}
+
 export const getServiceActivity = async (serviceType: ServiceIndetifier) => {
     const data = await retrieveStorageFile();
     return data.filter((obj: any) => obj.identifier === serviceType)[0].active;

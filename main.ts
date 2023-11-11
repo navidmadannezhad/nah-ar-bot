@@ -1,6 +1,6 @@
 require('dotenv').config()
 import { Bot, Context, session, SessionFlavor } from "grammy";
-import { SessionType } from "./src/types";
+import { ServiceIndetifier, SessionType } from "./src/types";
 import { ServiceControllerMenu, ServiceSelectMenu } from "./src/menus";
 import { initialSession } from "./src/storage/sessionManager";
 import {
@@ -11,6 +11,8 @@ import {
   } from "@grammyjs/conversations";
 import { configureStorageFile } from "./src/storage/fileManager";
 import { getIntervalConversation, sendNoticeMsgConversation } from "./src/conversations";
+import { getCurrentOrder, updateOrder } from "./src/storage/dataManager";
+import { COOK_LIST, DRINK_LIST } from "./volunteer";
 const cron = require('node-cron');
 
 // define session
@@ -68,19 +70,34 @@ const sendMsgOnInterval = (): void => {
     //     await sendNoticeMsg();
     // })
 
-    cron.schedule(`*/10 * * * * *`, async () => {
+    cron.schedule(`*/3 * * * * *`, async () => {
         await sendNoticeMsg();
     })
 }
 
 const sendNoticeMsg = async (): Promise<void> => {
-    let selectedDrink = 'غزنوی'
-    let selectedCook = 'هدایتی'
-    bot.api.sendMessage(process.env.ADMIN_ID as string,`<b>امروز!</b>\n\n<b>نوبت نوشیدنی:</b><b> ${selectedDrink}</b>\n<b>نوبت گرمکن:</b><b> ${selectedCook}</b>`, { parse_mode: "HTML" })
+    const currentDrinkOrder = await getCurrentOrder(ServiceIndetifier.DRINK);
+    const currentCookOrder = await getCurrentOrder(ServiceIndetifier.COOK);
+    let selectedDrink = DRINK_LIST[currentDrinkOrder];
+    let selectedCook = COOK_LIST[currentCookOrder]
+
+    const membership = await bot.api.getChatMember(process.env.TARGET_GROUP_ID as string, bot.botInfo.id);
+    const botIsMember = membership.status !== "left" && membership.status !== "kicked";
+
+    if(botIsMember){
+        bot.api.sendMessage(
+            process.env.TARGET_GROUP_ID as string,
+            `<b>امروز!</b>\n\n<b>نوبت نوشیدنی:</b><b> ${selectedDrink}</b>\n<b>نوبت گرمکن:</b><b> ${selectedCook}</b>`, 
+            { parse_mode: "HTML" }
+        )
+
+        const nextDrinkOrder = currentDrinkOrder == DRINK_LIST.length - 1 ? 0 : currentDrinkOrder + 1;
+        const nextCookOrder = currentCookOrder == COOK_LIST.length - 1 ? 0 : currentCookOrder + 1;
+
+        await updateOrder(ServiceIndetifier.COOK, nextCookOrder);
+        await updateOrder(ServiceIndetifier.DRINK, nextDrinkOrder);
+    }
 }
-
-
-
 
 const initiateSystem = async () => {
     await configureStorageFile();
