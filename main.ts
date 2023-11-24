@@ -83,32 +83,17 @@ const sendNoticeMsg = async (): Promise<void> => {
     let selectedDrink = DRINK_LIST[currentDrinkOrder];
     let selectedCook = COOK_LIST[currentCookOrder]
 
-    // console.log(selectedDrink)
-    // console.log(selectedCook)
-    console.log("executed");
-    console.log(bot)
-    console.log("bot info")
-    console.log(bot?.botInfo)
-    console.log("id")
-    console.log(bot?.botInfo?.id)
-    const membership = await bot.api.getChatMember(process.env.TARGET_GROUP_ID as string, bot.botInfo.id);
-    const botIsMember = membership.status !== "left" && membership.status !== "kicked";
-    console.log("membership status");
-    console.log(membership.status)
+    bot.api.sendMessage(
+        process.env.TARGET_GROUP_ID as string,
+        `<b>امروز!</b>\n\n<b>نوبت نوشیدنی:</b><b> ${selectedDrink}</b>\n<b>نوبت گرمکن:</b><b> ${selectedCook}</b>`, 
+        { parse_mode: "HTML" }
+    )
 
-    if(botIsMember){
-        bot.api.sendMessage(
-            process.env.TARGET_GROUP_ID as string,
-            `<b>امروز!</b>\n\n<b>نوبت نوشیدنی:</b><b> ${selectedDrink}</b>\n<b>نوبت گرمکن:</b><b> ${selectedCook}</b>`, 
-            { parse_mode: "HTML" }
-        )
+    const nextDrinkOrder = currentDrinkOrder == DRINK_LIST.length - 1 ? 0 : currentDrinkOrder + 1;
+    const nextCookOrder = currentCookOrder == COOK_LIST.length - 1 ? 0 : currentCookOrder + 1;
 
-        const nextDrinkOrder = currentDrinkOrder == DRINK_LIST.length - 1 ? 0 : currentDrinkOrder + 1;
-        const nextCookOrder = currentCookOrder == COOK_LIST.length - 1 ? 0 : currentCookOrder + 1;
-
-        await updateOrder(ServiceIndetifier.COOK, nextCookOrder);
-        await updateOrder(ServiceIndetifier.DRINK, nextDrinkOrder);
-    }
+    await updateOrder(ServiceIndetifier.COOK, nextCookOrder);
+    await updateOrder(ServiceIndetifier.DRINK, nextDrinkOrder);
 }
 
 const initiateSystem = async () => {
