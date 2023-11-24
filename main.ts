@@ -82,7 +82,7 @@ const sendNoticeMsg = async (): Promise<void> => {
     const currentCookOrder = await getCurrentOrder(ServiceIndetifier.COOK);
     let selectedDrink = DRINK_LIST[currentDrinkOrder];
     let selectedCook = COOK_LIST[currentCookOrder]
-
+    console.log(bot.api)
     bot.api.sendMessage(
         process.env.TARGET_GROUP_ID as string,
         `<b>امروز!</b>\n\n<b>نوبت نوشیدنی:</b><b> ${selectedDrink}</b>\n<b>نوبت گرمکن:</b><b> ${selectedCook}</b>`, 
