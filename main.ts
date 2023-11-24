@@ -18,7 +18,9 @@ const cron = require('node-cron');
 // define session
 export type ContextType = Context & SessionFlavor<SessionType> & ConversationFlavor;
 export type ConversationType = Conversation<ContextType>;
-const bot = new Bot<ContextType>(process.env.BOT_TOKEN as string)
+const bot_token = process.env.BOT_TOKEN;
+if(!bot_token) throw new Error("Bot Token is Unset!")
+export const bot = new Bot<ContextType>(process.env.BOT_TOKEN as string)
 
 const initial = (): SessionType => {
     return initialSession;
@@ -80,7 +82,7 @@ const sendNoticeMsg = async (): Promise<void> => {
     const currentCookOrder = await getCurrentOrder(ServiceIndetifier.COOK);
     let selectedDrink = DRINK_LIST[currentDrinkOrder];
     let selectedCook = COOK_LIST[currentCookOrder]
-    console.log(process.env.TARGET_GROUP_ID)
+
     // console.log(selectedDrink)
     // console.log(selectedCook)
 
