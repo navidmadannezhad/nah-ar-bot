@@ -88,9 +88,9 @@ const sendNoticeMsg = async (): Promise<void> => {
     console.log("executed");
     console.log(bot)
     console.log("bot info")
-    console.log(bot.botInfo)
+    console.log(bot?.botInfo)
     console.log("id")
-    console.log(bot.botInfo.id)
+    console.log(bot?.botInfo?.id)
     const membership = await bot.api.getChatMember(process.env.TARGET_GROUP_ID as string, bot.botInfo.id);
     const botIsMember = membership.status !== "left" && membership.status !== "kicked";
     console.log("membership status");
