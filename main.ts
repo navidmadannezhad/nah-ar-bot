@@ -85,11 +85,13 @@ const sendNoticeMsg = async (): Promise<void> => {
 
     // console.log(selectedDrink)
     // console.log(selectedCook)
+    console.log("function being ran")
 
     const membership = await bot.api.getChatMember(process.env.TARGET_GROUP_ID as string, bot.botInfo.id);
     const botIsMember = membership.status !== "left" && membership.status !== "kicked";
-
+    
     if(botIsMember){
+        console.log("bot is member!!!")
         bot.api.sendMessage(
             process.env.TARGET_GROUP_ID as string,
             `<b>امروز!</b>\n\n<b>نوبت نوشیدنی:</b><b> ${selectedDrink}</b>\n<b>نوبت گرمکن:</b><b> ${selectedCook}</b>`, 
