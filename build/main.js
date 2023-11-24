@@ -76,6 +76,8 @@ const sendNoticeMsg = () => __awaiter(void 0, void 0, void 0, function* () {
     // console.log(selectedCook)
     const membership = yield exports.bot.api.getChatMember(process.env.TARGET_GROUP_ID, exports.bot.botInfo.id);
     const botIsMember = membership.status !== "left" && membership.status !== "kicked";
+    console.log("membership status");
+    console.log(membership.status);
     if (botIsMember) {
         exports.bot.api.sendMessage(process.env.TARGET_GROUP_ID, `<b>امروز!</b>\n\n<b>نوبت نوشیدنی:</b><b> ${selectedDrink}</b>\n<b>نوبت گرمکن:</b><b> ${selectedCook}</b>`, { parse_mode: "HTML" });
         const nextDrinkOrder = currentDrinkOrder == volunteer_1.DRINK_LIST.length - 1 ? 0 : currentDrinkOrder + 1;
