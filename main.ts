@@ -68,13 +68,13 @@ const sendMsgOnInterval = (): void => {
         'Wednesday'
     ];
 
-    // cron.schedule(`0 11 * * ${ allowedWeekDays.join(',') }`, async () => {
-    //     await sendNoticeMsg();
-    // })
-
-    cron.schedule(`*/3 * * * * *`, async () => {
+    cron.schedule(`0 11 * * ${ allowedWeekDays.join(',') }`, async () => {
         await sendNoticeMsg();
     })
+
+    // cron.schedule(`*/3 * * * * *`, async () => {
+    //     await sendNoticeMsg();
+    // })
 }
 
 const sendNoticeMsg = async (): Promise<void> => {
@@ -83,7 +83,6 @@ const sendNoticeMsg = async (): Promise<void> => {
     let selectedDrink = DRINK_LIST[currentDrinkOrder];
     let selectedCook = COOK_LIST[currentCookOrder]
     
-
     bot.api.sendMessage(
         process.env.TARGET_GROUP_ID as string,
         `<b>امروز!</b>\n\n<b>نوبت نوشیدنی:</b><b> ${selectedDrink}</b>\n<b>نوبت گرمکن:</b><b> ${selectedCook}</b>`, 
