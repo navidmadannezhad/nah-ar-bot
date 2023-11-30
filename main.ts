@@ -13,7 +13,7 @@ import { configureStorageFile } from "./src/storage/fileManager";
 import { getIntervalConversation, sendNoticeMsgConversation } from "./src/conversations";
 import { getCurrentOrder, updateOrder } from "./src/storage/dataManager";
 import { COOK_LIST, DRINK_LIST } from "./volunteer";
-const cron = require('node-cron');
+const cron = require('node-cron')
 
 // define session
 export type ContextType = Context & SessionFlavor<SessionType> & ConversationFlavor;
@@ -65,16 +65,13 @@ const sendMsgOnInterval = (): void => {
         'Sunday',
         'Monday',
         'Tuesday',
-        'Wednesday'
+        'Wednesday',
+        'Thursday',
+        'Friday'
     ];
-
-    cron.schedule(`0 11 * * ${ allowedWeekDays.join(',') }`, async () => {
+    cron.schedule(`* 11 * * ${ allowedWeekDays.join(',') }`, async () => {
         await sendNoticeMsg();
     })
-
-    // cron.schedule(`*/3 * * * * *`, async () => {
-    //     await sendNoticeMsg();
-    // })
 }
 
 const sendNoticeMsg = async (): Promise<void> => {
