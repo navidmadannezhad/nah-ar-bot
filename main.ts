@@ -69,7 +69,7 @@ const sendMsgOnInterval = (): void => {
         'Thursday',
         'Friday'
     ];
-    cron.schedule(`15 19 * * ${ allowedWeekDays.join(',') }`, async () => {
+    cron.schedule(`55 22 * * ${ allowedWeekDays.join(',') }`, async () => {
         await sendNoticeMsg();
     })
 }
