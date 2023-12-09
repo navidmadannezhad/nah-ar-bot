@@ -58,12 +58,12 @@ const sendMsgOnInterval = () => {
         'Sunday',
         'Monday',
         'Tuesday',
-        'Wednesday'
+        'Wednesday',
     ];
-    // cron.schedule(`0 11 * * ${ allowedWeekDays.join(',') }`, async () => {
+    // cron.schedule(`00 11 * * ${ allowedWeekDays.join(',') }`, async () => {
     //     await sendNoticeMsg();
     // })
-    cron.schedule(`*/3 * * * * *`, () => __awaiter(void 0, void 0, void 0, function* () {
+    cron.schedule(`3 * * * * *`, () => __awaiter(void 0, void 0, void 0, function* () {
         yield sendNoticeMsg();
     }));
 };
@@ -72,7 +72,6 @@ const sendNoticeMsg = () => __awaiter(void 0, void 0, void 0, function* () {
     const currentCookOrder = yield (0, dataManager_1.getCurrentOrder)("cook" /* ServiceIndetifier.COOK */);
     let selectedDrink = volunteer_1.DRINK_LIST[currentDrinkOrder];
     let selectedCook = volunteer_1.COOK_LIST[currentCookOrder];
-    console.log(exports.bot.api);
     exports.bot.api.sendMessage(process.env.TARGET_GROUP_ID, `<b>امروز!</b>\n\n<b>نوبت نوشیدنی:</b><b> ${selectedDrink}</b>\n<b>نوبت گرمکن:</b><b> ${selectedCook}</b>`, { parse_mode: "HTML" });
     const nextDrinkOrder = currentDrinkOrder == volunteer_1.DRINK_LIST.length - 1 ? 0 : currentDrinkOrder + 1;
     const nextCookOrder = currentCookOrder == volunteer_1.COOK_LIST.length - 1 ? 0 : currentCookOrder + 1;

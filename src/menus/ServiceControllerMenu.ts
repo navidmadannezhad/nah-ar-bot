@@ -26,19 +26,19 @@ const toggleServiceActivation = async (selectedService: ServiceIndetifier) => {
 
 export const ServiceControllerMenu = new Menu("service-controller-menu")
 
-    .text("فعال سازی", async (ctx: any) => {
+    .text("فعال/غیرفعال سازی", async (ctx: any) => {
         if(ctx.session.canChangeSettings){
             const selectedService = ctx.session.selectedService;
             await toggleServiceActivation(selectedService);
         }
     })
 
-    .text("تغییر بازه زمانی", async (ctx: any) => {
-        console.log(ctx.session.canChangeSettings)
-        if(ctx.session.canChangeSettings){
-            await ctx.conversation.enter("getIntervalConversation")
-        }
-    })
+    // .text("تغییر بازه زمانی", async (ctx: any) => {
+    //     console.log(ctx.session.canChangeSettings)
+    //     if(ctx.session.canChangeSettings){
+    //         await ctx.conversation.enter("getIntervalConversation")
+    //     }
+    // })
 
     .text("لغو", (ctx: any) => {
         ctx.session = initialSession;

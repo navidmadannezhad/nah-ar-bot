@@ -11,8 +11,9 @@ import {
   } from "@grammyjs/conversations";
 import { configureStorageFile } from "./src/storage/fileManager";
 import { getIntervalConversation, sendNoticeMsgConversation } from "./src/conversations";
-import { getCurrentOrder, updateOrder } from "./src/storage/dataManager";
+import { getCurrentOrder, getServiceActivity, updateOrder } from "./src/storage/dataManager";
 import { COOK_LIST, DRINK_LIST } from "./volunteer";
+import axios from "axios";
 const cron = require('node-cron')
 
 // define session
@@ -67,20 +68,35 @@ const sendMsgOnInterval = (): void => {
         'Tuesday',
         'Wednesday',
     ];
-    cron.schedule(`00 11 * * ${ allowedWeekDays.join(',') }`, async () => {
+    // cron.schedule(`00 11 * * ${ allowedWeekDays.join(',') }`, async () => {
+    //     await sendNoticeMsg();
+    // })
+    cron.schedule(`*/10 * * * * *`, async () => {
         await sendNoticeMsg();
     })
 }
 
+const getTodayQuote = async () => {
+    const res = await axios.get(`https://one-api.ir/sokhan/?token=${process.env.ONE_API_TOKEN}&action=random`);
+    return res.data.result;
+}
+
 const sendNoticeMsg = async (): Promise<void> => {
+    const quote = await getTodayQuote();
+    const quoteStructure = `📚 <strong>${quote.text}</strong>\n\n<i>${quote.author}</i>`
+
     const currentDrinkOrder = await getCurrentOrder(ServiceIndetifier.DRINK);
     const currentCookOrder = await getCurrentOrder(ServiceIndetifier.COOK);
+
+    const drinkIsActive = await getServiceActivity(ServiceIndetifier.DRINK);
+    const cookIsActive = await getServiceActivity(ServiceIndetifier.COOK);
+
     let selectedDrink = DRINK_LIST[currentDrinkOrder];
     let selectedCook = COOK_LIST[currentCookOrder]
     
     bot.api.sendMessage(
         process.env.TARGET_GROUP_ID as string,
-        `<b>امروز!</b>\n\n<b>نوبت نوشیدنی:</b><b> ${selectedDrink}</b>\n<b>نوبت گرمکن:</b><b> ${selectedCook}</b>`, 
+        `${quoteStructure}\n\n${drinkIsActive ? "<b>نوبت نوشیدنی: </b><b>"+selectedDrink+"</b>" : ""}\n${cookIsActive ? "<b>نوبت گرمکن:</b><b> "+selectedCook+"</b>" : ""}`, 
         { parse_mode: "HTML" }
     )
 
