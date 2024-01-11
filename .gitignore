@@ -136,6 +136,7 @@ dist
 # Serverless Webpack directories
 .webpack/
 build/
+build
 
 # Optional stylelint cache
 
