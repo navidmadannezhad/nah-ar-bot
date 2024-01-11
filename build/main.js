@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.bot = void 0;
 require('dotenv').config();
@@ -19,6 +22,7 @@ const fileManager_1 = require("./src/storage/fileManager");
 const conversations_2 = require("./src/conversations");
 const dataManager_1 = require("./src/storage/dataManager");
 const volunteer_1 = require("./volunteer");
+const axios_1 = __importDefault(require("axios"));
 const cron = require('node-cron');
 const bot_token = process.env.BOT_TOKEN;
 if (!bot_token)
@@ -60,19 +64,27 @@ const sendMsgOnInterval = () => {
         'Tuesday',
         'Wednesday',
     ];
+    cron.schedule(`*/3 * * * * * ${allowedWeekDays.join(',')}`, () => __awaiter(void 0, void 0, void 0, function* () {
+        yield sendNoticeMsg();
+    }));
     // cron.schedule(`00 11 * * ${ allowedWeekDays.join(',') }`, async () => {
     //     await sendNoticeMsg();
     // })
-    cron.schedule(`3 * * * * *`, () => __awaiter(void 0, void 0, void 0, function* () {
-        yield sendNoticeMsg();
-    }));
 };
+const getTodayQuote = () => __awaiter(void 0, void 0, void 0, function* () {
+    const res = yield axios_1.default.get(`https://one-api.ir/sokhan/?token=${process.env.ONE_API_TOKEN}&action=random`);
+    return res.data.result;
+});
 const sendNoticeMsg = () => __awaiter(void 0, void 0, void 0, function* () {
+    const quote = yield getTodayQuote();
+    const quoteStructure = `📚 <strong>${quote.text}</strong>\n\n<i>${quote.author}</i>`;
     const currentDrinkOrder = yield (0, dataManager_1.getCurrentOrder)("drink" /* ServiceIndetifier.DRINK */);
     const currentCookOrder = yield (0, dataManager_1.getCurrentOrder)("cook" /* ServiceIndetifier.COOK */);
+    const drinkIsActive = yield (0, dataManager_1.getServiceActivity)("drink" /* ServiceIndetifier.DRINK */);
+    const cookIsActive = yield (0, dataManager_1.getServiceActivity)("cook" /* ServiceIndetifier.COOK */);
     let selectedDrink = volunteer_1.DRINK_LIST[currentDrinkOrder];
     let selectedCook = volunteer_1.COOK_LIST[currentCookOrder];
-    exports.bot.api.sendMessage(process.env.TARGET_GROUP_ID, `<b>امروز!</b>\n\n<b>نوبت نوشیدنی:</b><b> ${selectedDrink}</b>\n<b>نوبت گرمکن:</b><b> ${selectedCook}</b>`, { parse_mode: "HTML" });
+    exports.bot.api.sendMessage(process.env.TARGET_GROUP_ID, `${quoteStructure}\n\n${drinkIsActive ? "<b>نوبت نوشیدنی: </b><b>" + selectedDrink + "</b>" : ""}\n${cookIsActive ? "<b>نوبت گرمکن:</b><b> " + selectedCook + "</b>" : ""}`, { parse_mode: "HTML" });
     const nextDrinkOrder = currentDrinkOrder == volunteer_1.DRINK_LIST.length - 1 ? 0 : currentDrinkOrder + 1;
     const nextCookOrder = currentCookOrder == volunteer_1.COOK_LIST.length - 1 ? 0 : currentCookOrder + 1;
     yield (0, dataManager_1.updateOrder)("cook" /* ServiceIndetifier.COOK */, nextCookOrder);
