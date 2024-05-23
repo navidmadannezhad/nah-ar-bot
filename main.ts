@@ -14,6 +14,7 @@ import { getIntervalConversation, sendNoticeMsgConversation } from "./src/conver
 import { getCurrentOrder, getServiceActivity, updateOrder } from "./src/storage/dataManager";
 import { COOK_LIST, DRINK_LIST } from "./volunteer";
 import axios from "axios";
+import { isHoliday } from "./src/services/isHoliday";
 const cron = require('node-cron')
 
 // define session
@@ -72,7 +73,10 @@ const sendMsgOnInterval = (): void => {
     //     await sendNoticeMsg();
     // })
     cron.schedule(`00 11 * * ${ allowedWeekDays.join(',') }`, async () => {
-        await sendNoticeMsg();
+        let holiday = await isHoliday();
+        if(!holiday){
+            await sendNoticeMsg();
+        }
     })
 }
 
