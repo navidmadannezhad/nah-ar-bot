@@ -66,8 +66,7 @@ bot.on('message:text', async (ctx) => {
     const messageText = ctx.message.text;
 
     if (messageText.startsWith('/admin_message')) {
-        const message = messageText.slice(14); // Extract message after '/admin_message'
-        console.log(message);
+        const message = messageText.slice(14);
         if (isAdmin(ctx)) {
         try {
             await ctx.api.sendMessage(process.env.TARGET_GROUP_ID as string, message);
