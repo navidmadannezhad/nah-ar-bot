@@ -60,6 +60,31 @@ bot.command("settings", async (ctx) => {
     }
 });
 
+
+
+bot.on('message:text', async (ctx) => {
+    const messageText = ctx.message.text;
+
+    if (messageText.startsWith('/admin_message')) {
+        const message = messageText.slice(14); // Extract message after '/admin_message'
+        console.log(message);
+        if (isAdmin(ctx)) {
+        try {
+            await ctx.api.sendMessage(process.env.TARGET_GROUP_ID as string, message);
+            ctx.reply('Message sent successfully!');
+        } catch (error) {
+            console.error('Error sending message:', error);
+            ctx.reply('An error occurred while sending the message.');
+        }
+        } else {
+            await ctx.reply("حاج آقا نا-ادمین!");
+        }
+    }
+});
+
+
+
+
 const sendMsgOnInterval = (): void => {
     const allowedWeekDays: string[] = [
         'Saturday',
