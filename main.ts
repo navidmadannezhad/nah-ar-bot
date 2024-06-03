@@ -10,7 +10,7 @@ import {
     createConversation,
   } from "@grammyjs/conversations";
 import { configureStorageFile } from "./src/storage/fileManager";
-import { getIntervalConversation, sendNoticeMsgConversation } from "./src/conversations";
+import { getIntervalConversation, sendAdminMessage, sendNoticeMsgConversation } from "./src/conversations";
 import { getCurrentOrder, getServiceActivity, updateOrder } from "./src/storage/dataManager";
 import { COOK_LIST, DRINK_LIST } from "./volunteer";
 import axios from "axios";
@@ -41,7 +41,8 @@ const openFeaturesMenu = (ctx: any) => {
 
 // register conversations
 bot.use(createConversation(getIntervalConversation));
-bot.use(createConversation(sendNoticeMsgConversation))
+bot.use(createConversation(sendNoticeMsgConversation));
+bot.use(createConversation(sendAdminMessage));
 
 // register menus
 bot.use(ServiceControllerMenu);
@@ -59,8 +60,6 @@ bot.command("settings", async (ctx) => {
     }
 });
 
-
-
 const sendMsgOnInterval = (): void => {
     const allowedWeekDays: string[] = [
         'Saturday',
@@ -70,7 +69,10 @@ const sendMsgOnInterval = (): void => {
         'Wednesday',
     ];
     // cron.schedule(`*/3 * * * * * ${ allowedWeekDays.join(',') }`, async () => {
-    //     await sendNoticeMsg();
+    //     let holiday = await isHoliday();
+    //     if(!holiday){
+    //         await sendNoticeMsg();
+    //     }
     // })
     cron.schedule(`00 11 * * ${ allowedWeekDays.join(',') }`, async () => {
         let holiday = await isHoliday();
